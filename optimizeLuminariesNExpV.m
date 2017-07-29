@@ -14,7 +14,7 @@ end
 
 areaPatch = (0.3*0.3)/2; % triangles of half a meter
 
-MENOR = Inf;   %%% Esta variable contiene el mejor valor de la función a optimizar (hasta el momento).
+MENOR = Inf;   %%% Esta variable contiene el mejor valor de la funci?n a optimizar (hasta el momento).
 NroIterIf = 0;
 
 [y x] = size(positionObj.positionsMapMatrix);
@@ -58,7 +58,7 @@ for ii=1:cantRepeat
     % Generate indexes to travel neighborhoods
     iii=1;jjj=1;nextjjj = 1;
     
-    MENOR=Inf; %%% Esta variable contiene el mejor valor de la función a optimizar (hasta el momento).
+    MENOR=Inf; %%% Esta variable contiene el mejor valor de la funci?n a optimizar (hasta el momento).
     NroIter=0; NroIterIf=0; 
 
 
@@ -154,7 +154,7 @@ for ii=1:cantRepeat
             end
             
             % In small neighborgs or when tabu has lots of elements it can
-            % happen that we don´t find a plausible solution
+            % happen that we don?t find a plausible solution
             if (~foundPlausibleSol)
                 continue;
             end
@@ -233,12 +233,12 @@ for ii=1:cantRepeat
         
         
         NroIterIf = NroIterIf + hMaxCalculated;
-        objetives = zeros(hMaxCalculated, 1);
+        objectives = zeros(hMaxCalculated, 1);
 
         %---------------------------------------
         % Find Uniformity/Dispersion:
         %---------------------------------------
-%         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(:, problemObj.objectiveSelectedIndexesOrdered);
+%         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(problemObj.objectiveSelectedIndexesOrdered, :);
 %         BB = zeros(triangleCount, hMax);
 %         BB(problemObj.objectiveSelectedIndexesOrdered, :) = B; 
 %         
@@ -250,51 +250,51 @@ for ii=1:cantRepeat
         %---------------------------------------
         % Optimize Power Find min and max luxes:
         %---------------------------------------
-%         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(:, problemObj.objectiveSelectedIndexesOrdered);
-%         BB = zeros(problemObj.triangleCount, hMax);
-%         BB(problemObj.objectiveSelectedIndexesOrdered, :) = B;
-%         
-%         for h = 1:hMaxCalculated
-%             objetives(h) = sum(luminarieObj.luminairePower(selectedLuminary));
-%             % Penalty
-%             c1 = ((max(50 - (min(B(:, h))/areaPatch), 0)^2)*100);
-%             if (c1 > 0)
-%                 c1 = c1 + luminarieObj.maxPower * problemObj.lumCount; % c1 >= luminarieObj.maxPower
-%             end
-%             c2 = ((max((max(B(:, h))/areaPatch) - 750, 0)^2)*100);
-%             if (c2 > 0)
-%                 c2 = c2 + luminarieObj.maxPower * problemObj.lumCount; % c2 >= luminarieObj.maxPower
-%             end
-% 
-%             objectives(h) = objectives(h) + c1 + c2;
-%         end
+         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(problemObj.objectiveSelectedIndexesOrdered, :);
+         BB = zeros(problemObj.triangleCount, hMax);
+         BB(problemObj.objectiveSelectedIndexesOrdered, :) = B;
+         
+         for h = 1:hMaxCalculated
+             objectives(h) = sum(luminarieObj.luminairePower(selectedLuminary(:, h)));
+             % Penalty
+             c1 = ((max(50 - (min(B(:, h))/areaPatch), 0)^2)*100);
+             if (c1 > 0)
+                 c1 = c1 + luminarieObj.maxPower * problemObj.lumCount; % c1 >= luminarieObj.maxPower
+             end
+             c2 = ((max((max(B(:, h))/areaPatch) - 750, 0)^2)*100);
+             if (c2 > 0)
+                 c2 = c2 + luminarieObj.maxPower * problemObj.lumCount; % c2 >= luminarieObj.maxPower
+             end
+ 
+             objectives(h) = objectives(h) + c1 + c2;
+         end
         %---------------------------------------
 
         %---------------------------------------
         % Find exact solution:
         %---------------------------------------
-        B = -lowRankObj.Y * (lowRankObj.V * Edyn) + Edyn;
-        
-        for h = 1:hMaxCalculated
-            diffVect = (B(:, h) - problemObj.target);
-            objectives(h) = sqrt(sum(diffVect.*diffVect));
-        end
+%        B = -lowRankObj.Y * (lowRankObj.V * Edyn) + Edyn;
+%        
+%        for h = 1:hMaxCalculated
+%            diffVect = (B(:, h) - problemObj.target);
+%            objectives(h) = sqrt(sum(diffVect.*diffVect));
+%        end
         %---------------------------------------
 
         %---------------------------------------
         % _Maximize_ sum of luxes on a surface:
         % Restrictions: max luminaries power
         %---------------------------------------
-%         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(:, problemObj.objectiveSelectedIndexesOrdered);
+%         B = -lowRankObj.Yp * (lowRankObj.V * Edyn) + Edyn(problemObj.objectiveSelectedIndexesOrdered, :);
 %         
 %         for h = 1:hMaxCalculated
 %             objetives(h) = sum(B(:, h)/areaPatch);
 %             % Penalty
-%             c1 = -1*((max(restrictionObj.maxPower - sum(luminarieObj.luminairePower(selectedLuminary(:, h))), 0)^2)*100);
+%             c1 = -1*((min(restrictionObj.maxPower - sum(luminarieObj.luminairePower(selectedLuminary(:, h))), 0)^2)*100);
 %             if (c1 < 0)
 %                 c1 = c1 + luminarieObj.maxPower * problemObj.lumCount; % c1 >= luminarieObj.maxPower
 %             end
-%             objectives(h) = -1*(c1 + objectives(h));
+%             objetivo = -1*(c1 + objetivo/(size(problemObj.objectiveSelectedIndexesOrdered,1)));
 %         end
         %---------------------------------------
 
@@ -361,12 +361,12 @@ for ii=1:cantRepeat
         end
     end
     singleTimer = toc(singleTimerId);
-    %%%%%%%%%%%%%Hallo la solución real%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%Hallo la soluci?n real%%%%%%%%%%%%%%%%%%%%%%%
     VE=zeros(k,1);
     for i=1:n, VE(VI(i))=VE(VI(i))+Efound(i); end
     Creal=-Y*(VE);
     VE=zeros(k,1);
-    %%%%%%%%%%%%%Hallé la solución real%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%Hall? la soluci?n real%%%%%%%%%%%%%%%%%%%%%%%
     
     beep
 

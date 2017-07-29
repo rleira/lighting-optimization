@@ -15,9 +15,16 @@ try
             save('testCases.mat', 'testCases');
 
             % Set parameters for tests
-            lumCount = test(1);
-            cantRepeat = test(2);
-            MaxNroIterIf = test(3);
+            lumCount = test(1)
+            cantRepeat = test(2)
+            MaxNroIterIf = test(3)
+            try 
+                Algorithm = test(4)
+            catch
+                Algorithm = 0;
+                disp('No algorithm found! defaulting to 0')
+            end
+            
             
             ended = true;
         else
